@@ -4,7 +4,8 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -49,7 +50,7 @@ fun SpotifyApp() {
     var currentPosition by remember { mutableStateOf(0) }
     var maxDuration by remember { mutableStateOf(1) }
 
-    // UPDATES PROGRESS BAR
+    // Atualiza a barra de progresso
     LaunchedEffect(isPlaying) {
         while (isPlaying) {
             delay(1000)
@@ -60,7 +61,7 @@ fun SpotifyApp() {
         }
     }
 
-    // FREE RESOURCES
+    // Libera recursos do MediaPlayer
     DisposableEffect(Unit) {
         onDispose {
             mediaPlayer?.release()
@@ -146,9 +147,9 @@ fun SongItem(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(R.drawable.ic_music_note),
-            contentDescription = null,
+        androidx.compose.foundation.Image(
+            painter = painterResource(id = song.coverResId),
+            contentDescription = "${song.title} album cover",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(56.dp)
@@ -199,6 +200,15 @@ fun PlayerBar(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
+            androidx.compose.foundation.Image(
+                painter = painterResource(id = song.coverResId),
+                contentDescription = "${song.title} album cover",
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(song.title, color = Color.White, fontSize = 14.sp, maxLines = 1)
                 Text(song.artist, color = Color.Gray, fontSize = 12.sp, maxLines = 1)
@@ -228,12 +238,15 @@ fun PlayerBar(
     }
 }
 
-data class Song(val title: String, val artist: String, val resourceId: Int)
+data class Song(val title: String, val artist: String, val resourceId: Int, val coverResId: Int)
 
 val songs = listOf(
-    Song("WW3", "Ye", R.raw.ww3),
-    Song("HH", "Ye", R.raw.hh) ,
-    Song("Cousins", "Ye", R.raw.cousins)
+    Song("WW3", "Ye", R.raw.ww3, R.drawable.ww3_cover),
+    Song("HH", "Ye", R.raw.hh, R.drawable.hh_cover),
+    Song("Cousins", "Ye", R.raw.cousins, R.drawable.cousins_cover) ,
+    Song("Champion", "Kanye West", R.raw.champion, R.drawable.graduation_cover) ,
+    Song("Flashing Lights", "Kanye West", R.raw.flashinglights, R.drawable.graduation_cover) ,
+    Song("Stronger", "Kanye West", R.raw.stronger, R.drawable.graduation_cover)
 )
 
 val DarkBackground = Color(0xFF121212)
